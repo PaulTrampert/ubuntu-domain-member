@@ -1,0 +1,18 @@
+---
+- hosts: all
+  become: yes
+  roles:
+    - ubuntu_base
+
+- hosts: dc01
+  become: yes
+  roles:
+    - domain-controller-role
+
+- hosts: dm01
+  become: yes
+  vars:
+    ad_dc_ip: "{{hostvars['dc01']['ansible_default_ipv4']['address']}}"
+    dc_hostname: dc01
+  roles:
+    - ../../.

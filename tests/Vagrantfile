@@ -1,0 +1,34 @@
+Vagrant.configure("2") do |config|
+
+  config.ssh.insert_key = false
+
+  ["dc01", "dm01"].each do |machine_id|
+    config.vm.define machine_id do |machine|
+      machine.vm.box = "bento/ubuntu-18.04"
+      machine.vm.hostname = machine_id
+      if machine_id == "dm01"
+        machine.vm.provision :ansible do |ansible|
+          ansible.limit = "all"
+          ansible.playbook = "test.yml"
+          ansible.galaxy_role_file = "requirements.yml"
+          ansible.raw_arguments = Shellwords.shellsplit(ENV['ANSIBLE_ARGS']) if ENV['ANSIBLE_ARGS']
+
+          ansible.extra_vars = {
+            ad_realm: "test.ptrampert.com",
+            ad_domain: "ptrampert",
+            ad_admin_pass: "Asdfasdf1"
+          }
+
+          ansible.host_vars = {
+            "dc01" => {
+              "hostname" => "dc01"
+            },
+            "dm01" => {
+              "hostname" => "dm01"
+            }
+          }
+        end
+      end
+    end
+  end
+end

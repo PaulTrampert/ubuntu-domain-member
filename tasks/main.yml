@@ -1,0 +1,57 @@
+---
+- name: Install software
+  apt:
+    name: [krb5-user, samba, sssd, chrony]
+
+- name: Configure chrony
+  template:
+    src: chrony.conf
+    dest: /etc/chrony/chrony.conf
+  notify: Restart chrony
+
+- name: Mask systemd-resolved
+  systemd:
+    name: systemd-resolved
+    masked: yes
+    enabled: no
+    state: stopped
+
+- name: Configure DNS
+  template:
+    src: resolv.conf
+    dest: /etc/resolv.conf
+
+- name: Configure Kerberos
+  template:
+    src: krb5.conf
+    dest: /etc/krb5.conf
+
+- name: Configure samba
+  template:
+    src: smb.conf
+    dest: /etc/samba/smb.conf
+  notify:
+    - Restart smbd
+    - Restart nmbd
+
+- name: Configure sssd.conf
+  template:
+    src: sssd.conf
+    dest: /etc/sssd/sssd.conf
+    mode: 0600
+  notify:
+    - Restart sssd
+
+- name: Update hosts file
+  template:
+    src: hosts
+    dest: /etc/hosts
+
+- name: Update /etc/pam.d/common-session
+  lineinfile:
+    path: /etc/pam.d/common-session
+    insertafter: session\s+required\s+pam_unix\.so
+    line: session required pam_mkhomedir.so skel=/etc/skel/ umask=0022
+
+- name: Join the domain
+  shell: net ads join -k

@@ -1,0 +1,6 @@
+---
+- name: ubuntu_base
+  src: git+https://github.com/PaulTrampert/ubuntu_base.git
+
+- name: domain-controller-role
+  src: git+https://github.com/PaulTrampert/domain-controller-role.git
