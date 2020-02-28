@@ -53,5 +53,15 @@
     insertafter: session\s+required\s+pam_unix\.so
     line: session required pam_mkhomedir.so skel=/etc/skel/ umask=0022
 
+- name: Copy up keytab file
+  copy:
+    src: "{{admin_keytab}}"
+    dest: /root/Administrator.keytab
+
 - name: Join the domain
-  shell: net ads join -k
+  shell: "kinit {{admin_username}} -k -t /root/Administrator.keytab && net ads join -k"
+
+- name: Delete keytab file
+  file:
+    name: /root/Administrator.keytab
+    state: absent

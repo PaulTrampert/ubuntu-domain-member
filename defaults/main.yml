@@ -1,2 +1,3 @@
 ---
-# defaults file for ubuntu-domain-member
+admin_keytab: ~/Administrator.keytab
+admin_username: Administrator
