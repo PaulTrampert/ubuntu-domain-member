@@ -22,3 +22,9 @@
     name: sssd
     state: restarted
     enabled: yes
+
+- name: Restart sshd
+  service:
+    name: sshd
+    state: restarted
+    enabled: yes

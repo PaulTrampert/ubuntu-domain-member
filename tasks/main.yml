@@ -47,6 +47,21 @@
     src: hosts
     dest: /etc/hosts
 
+- name: Update sshd_config
+  template:
+    src: sshd_config
+    dest: /etc/ssh/sshd_config
+  notify:
+  - Restart sshd
+
+- name: Update sudoers
+  template:
+    src: domain_sudoers
+    dest: /etc/sudoers.d/domain_sudoers
+    validate: 'visudo -cf %s'
+    mode: 0440
+
+
 - name: Update /etc/pam.d/common-session
   lineinfile:
     path: /etc/pam.d/common-session

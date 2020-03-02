@@ -1,3 +1,7 @@
 ---
 admin_keytab: ~/Administrator.keytab
 admin_username: Administrator
+ad_sudoers_groups:
+  - Sudoers
+  - Domain Admins
+  - Unix Admins
