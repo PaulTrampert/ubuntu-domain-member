@@ -1,2 +1,5 @@
 127.0.0.1  localhost
+
+{% if not ad_use_dhcp %}
 {{ansible_default_ipv4.address}} {{hostname}}.{{ad_realm}} {{hostname}}
+{% endif %}

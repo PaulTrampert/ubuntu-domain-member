@@ -6,3 +6,4 @@ ad_sudoers_groups:
   - Sudoers
   - Domain Admins
   - Unix Admins
+ad_use_dhcp: no
