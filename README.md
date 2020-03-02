@@ -14,6 +14,7 @@ Role Variables
 * `ad_realm`: The active directory realm (e.g. domain.samdom.com)
 * `ad_domain`: The domain shortname (e.g. SAMDOM)
 * `ad_dc_ip`: The ip address of the domain controller.
+* `ad_use_dhcp`: Use dhcp to get domain ip address.
 
 Dependencies
 ------------

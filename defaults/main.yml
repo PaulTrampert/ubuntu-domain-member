@@ -7,3 +7,4 @@ ad_sudoers_groups:
   - Domain Admins
   - Unix Admins
 ad_use_dhcp: no
+internal_ip: "{{ansible_default_ipv4.address}}"
