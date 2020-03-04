@@ -15,23 +15,24 @@
     dest: /etc/chrony/chrony.conf
   notify: Restart chrony
 
-- name: Configure Kerberos
-  template:
-    src: krb5.conf
-    dest: /etc/krb5.conf
-
-- name: Configure samba
-  template:
-    src: smb.conf
-    dest: /etc/samba/smb.conf
-  notify:
-    - Restart smbd
-    - Restart nmbd
-
 - name: Update hosts file
   template:
     src: hosts
     dest: /etc/hosts
+
+- name: Check domain membership
+  shell:
+    cmd: realm list {{ad_realm|lower}}
+  register: realm_list_result
+
+- name: Join domain
+  include: join_domain.yml
+  when: '"configured: kerberos-member" not in realm_list_result.stdout'
+
+- name: Configure Kerberos
+  template:
+    src: krb5.conf
+    dest: /etc/krb5.conf
 
 - name: Update sshd_config
   template:
@@ -47,21 +48,11 @@
     validate: 'visudo -cf %s'
     mode: 0440
 
-
 - name: Update /etc/pam.d/common-session
   lineinfile:
     path: /etc/pam.d/common-session
     insertafter: session\s+required\s+pam_unix\.so
     line: session required pam_mkhomedir.so skel=/etc/skel/ umask=0022
-
-- name: Check domain membership
-  shell:
-    cmd: realm list {{ad_realm|lower}}
-  register: realm_list_result
-
-- name: Join domain
-  include: join_domain.yml
-  when: '"configured: kerberos-member" not in realm_list_result.stdout'
 
 - name: Finalize sssd config
   lineinfile:
@@ -80,3 +71,11 @@
       regex: dyndns_iface\s*=.*
   notify:
     - Restart sssd
+
+- name: Configure samba
+  template:
+    src: smb.conf
+    dest: /etc/samba/smb.conf
+  notify:
+    - Restart smbd
+    - Restart nmbd
