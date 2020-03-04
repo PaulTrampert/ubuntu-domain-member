@@ -1,6 +1,6 @@
 ---
 admin_keytab: ~/Administrator.keytab
-admin_username: Administrator
+admin_username: Administrator@{{ad_realm | upper}}
 domain_subnet: 192.168.1.0/24
 ad_sudoers_groups:
   - Sudoers
