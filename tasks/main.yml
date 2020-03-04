@@ -61,7 +61,7 @@
 
 - name: Join domain
   include: join_domain.yml
-  when: '"configured: kerberos-member" in realm_list_result.stdout'
+  when: '"configured: kerberos-member" not in realm_list_result.stdout'
 
 - name: Finalize sssd config
   lineinfile:
