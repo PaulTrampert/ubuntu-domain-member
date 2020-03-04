@@ -1,7 +1,13 @@
 ---
 - name: Install software
   apt:
-    name: [krb5-user, samba, sssd, chrony]
+    name:
+      - realmd
+      - samba
+      - chrony
+      - packagekit
+      - policykit-1
+      - krb5-user
 
 - name: Configure chrony
   template:
@@ -21,14 +27,6 @@
   notify:
     - Restart smbd
     - Restart nmbd
-
-- name: Configure sssd.conf
-  template:
-    src: sssd.conf
-    dest: /etc/sssd/sssd.conf
-    mode: 0600
-  notify:
-    - Restart sssd
 
 - name: Update hosts file
   template:
@@ -56,15 +54,29 @@
     insertafter: session\s+required\s+pam_unix\.so
     line: session required pam_mkhomedir.so skel=/etc/skel/ umask=0022
 
-- name: Copy up keytab file
-  copy:
-    src: "{{admin_keytab}}"
-    dest: /root/Administrator.keytab
+- name: Check domain membership
+  shell:
+    cmd: realm list {{ad_realm|lower}}
+  register: realm_list_result
 
-- name: Join the domain
-  shell: "kinit {{admin_username}} -k -t /root/Administrator.keytab && net ads join -k"
+- name: Join domain
+  include: join_domain.yml
+  when: '"configured: kerberos-member" in realm_list_result.stdout'
 
-- name: Delete keytab file
-  file:
-    name: /root/Administrator.keytab
-    state: absent
+- name: Finalize sssd config
+  lineinfile:
+    path: /etc/sssd/sssd.conf
+    insertafter: \[domain/{{ad_realm|lower|replace('.', '\.')}}\]
+    regex: "{{item.regex}}"
+    line: "{{item.line}}"
+  with_items:
+    - line: use_fully_qualified_names = False
+      regex: use_fully_qualified_names\s*=.*
+    - line: override_shell = /bin/bash
+      regex: override_shell\s*=.*
+    - line: override_homedir = /home/%d/%u
+      regex: override_homedir\s*=.*
+    - line: dyndns_iface = {{ad_dyndns_iface}}
+      regex: dyndns_iface\s*=.*
+  notify:
+    - Restart sssd

@@ -1,4 +1,4 @@
-127.0.0.1  localhost
+127.0.0.1  localhost {% if ad_use_dhcp %} {{hostname}} {{hostname}}.{{ad_realm}} {% endif %}
 
 {% if not ad_use_dhcp %}
 {{internal_ip}} {{hostname}}.{{ad_realm}} {{hostname}}
