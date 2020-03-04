@@ -67,8 +67,12 @@
       regex: override_shell\s*=.*
     - line: override_homedir = /home/%d/%u
       regex: override_homedir\s*=.*
+    - line: dyndns_update = True
+      regex: dyndns_update\s*=.*
     - line: dyndns_iface = {{ad_dyndns_iface}}
       regex: dyndns_iface\s*=.*
+    - line: dyndns_refresh_interval = 3600
+      regex: dyndns_refresh_interval\s*=.*
   notify:
     - Restart sssd
 
