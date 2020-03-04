@@ -9,18 +9,6 @@
     dest: /etc/chrony/chrony.conf
   notify: Restart chrony
 
-- name: Mask systemd-resolved
-  systemd:
-    name: systemd-resolved
-    masked: yes
-    enabled: no
-    state: stopped
-
-- name: Configure DNS
-  template:
-    src: resolv.conf
-    dest: /etc/resolv.conf
-
 - name: Configure Kerberos
   template:
     src: krb5.conf
