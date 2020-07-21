@@ -4,7 +4,8 @@ Vagrant.configure("2") do |config|
 
   ["dc01", "dm01"].each do |machine_id|
     config.vm.define machine_id do |machine|
-      machine.vm.box = "bento/ubuntu-18.04"
+      machine.vm.box = "ptrampert/ubuntu-focal"
+      machine.vm.box_url = "https://packages.ptrampert.com/repository/vagrant/ubuntu-focal.tar.gz"
       machine.vm.hostname = machine_id
       if machine_id == "dm01"
         machine.vm.provision :ansible do |ansible|
@@ -16,7 +17,8 @@ Vagrant.configure("2") do |config|
           ansible.extra_vars = {
             ad_realm: "test.ptrampert.com",
             ad_domain: "ptrampert",
-            ad_admin_pass: "Asdfasdf1"
+            ad_admin_pass: "Asdfasdf1",
+            admin_password: "Asdfasdf1"
           }
 
           ansible.host_vars = {
