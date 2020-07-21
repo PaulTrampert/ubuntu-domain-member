@@ -1,12 +1,5 @@
-- name: Copy up keytab file
-  copy:
-    src: "{{admin_keytab}}"
-    dest: /root/Administrator.keytab
-
 - name: Join the domain
-  shell: "kinit {{admin_username}} -k -t /root/Administrator.keytab && realm join --verbose {{ad_realm|lower}}"
-
-- name: Delete keytab file
-  file:
-    name: /root/Administrator.keytab
-    state: absent
+  expect:
+    command: "realm join --user={{admin_username}} {{ad_realm|lower}}"
+    responses:
+      Password for .*: "{{admin_password}}"

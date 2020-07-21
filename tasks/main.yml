@@ -9,6 +9,10 @@
       - policykit-1
       - krb5-user
 
+- name: Ensure python prereqs
+  pip:
+    name: pexpect
+
 - name: Configure chrony
   template:
     src: chrony.conf
