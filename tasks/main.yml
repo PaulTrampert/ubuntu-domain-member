@@ -3,7 +3,6 @@
   apt:
     name:
       - realmd
-      - samba
       - chrony
       - packagekit
       - policykit-1
@@ -79,11 +78,3 @@
       regex: dyndns_refresh_interval\s*=.*
   notify:
     - Restart sssd
-
-- name: Configure samba
-  template:
-    src: smb.conf
-    dest: /etc/samba/smb.conf
-  notify:
-    - Restart smbd
-    - Restart nmbd

@@ -1,16 +1,4 @@
 ---
-- name: Restart smbd
-  service:
-    name: smbd
-    state: restarted
-    enabled: yes
-
-- name: Restart nmbd
-  service:
-    name: nmbd
-    state: restarted
-    enabled: yes
-
 - name: Restart chrony
   service:
     name: chrony
